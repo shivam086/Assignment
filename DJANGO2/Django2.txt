@@ -1,0 +1,37 @@
+- By default, Django adds a Manager with the name 'objects' to every Django model class. If you have specific business logic, you can make use of managers to override built-in model queries to add business logic to default database behaviour.
+
+models.py :-
+---------
+
+from django.contrib.auth.models import (UserManager,)
+
+class ActiveUserManager(UserManager):
+    """
+        ActiveUserManager class to filter the active user.
+    """
+    def get_queryset(self):
+        return super(ActiveUserManager, self).get_queryset().filter(is_active=True)
+
+class User(models.Model):
+    full_name = models.CharField(max_length=50, verbose_name='First Name')
+    phone_number = models.CharField(max_length=50, verbose_name='Phone Number')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active'
+
+    objects = ActiveUserManager()
+    all_objects = UserManager()
+
+In this model, we are defining objects and all_objects instance which will refer to ActiveUserManger and UserManager class.
+ActiveUserManger -> It will return only active user queryset.
+UserManger -> It will return both active and inactive user queryset.
+
+in views.py or any services file file your query will be:-
+---------------------------------------------------------
+from models import User
+
+obj1 = User.objects.all()
+obj2 = User.all_objects.all()
+
+This will return the object based on the query written in managers.
+
+**obj1 will return all users who are active.
+**obj2 will return all users who are active and inactive both.

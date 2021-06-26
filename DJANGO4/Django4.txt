@@ -1,0 +1,45 @@
+_set.all() -> To Get the reverse relationship, we used _set.all().
+
+_set is associated with reverse relation on a model. Django allows us to access reverse relations on a model.
+By default, Django creates a manager ( RelatedManager ) on your model to handle this, named <model>_set, where <model> is your model name in lowercase.
+But, we can override this by providing a related_name as a parameter when defining the model.
+
+------------------------------
+EXAMPLE----
+------------------------------
+class Author(models.Model):
+    name = models.CharField(max_length=255)
+
+class Book(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    authors = models.ManyToManyField('Author', blank=True)
+
+According to this model, a book can have multiple authors and an author can also associated to multiple books.
+
+1. So, to get all the authors associated with a Book, we can use following query:
+
+    book_object.authors.all()
+
+2. But to get the reverse data  i.e. how to get all books associated with an author.
+We can use reverse relationship using _set in this case like
+
+    author_object.book_set.all()
+
+It will return a QuerySet of Books objects that belong to a particular author.
+
+NOTE:
+-----
+- By default we use modelname_set to reverse the relationship, but we can also override this by providing a related_name as a parameter when defining the model, i.e.
+
+class Author(models.Model):
+    name = models.CharField(max_length=255)
+
+class Book(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    authors = models.ManyToManyField('Author', blank=True, related_name="book_authors")
+
+Then you can get the reverse without using _set like so:
+
+    author_object.book_authors.all()
+
+This query will return the same output as author_object.book_set.all().

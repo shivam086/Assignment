@@ -1,0 +1,32 @@
+- By default, django assigns 'id' as the primary key field for a model, but if you manually assign another field as the primary key, then pk will refer to that field.
+- pk is a special parameter for django that refers to the primary key field on the model.
+
+
+from django.db import models
+from django.shortcuts import get_object_or_404
+
+CASE-1:
+-------
+class UserModel(models.Model):
+    name = models.CharField('Name', max_length=20)
+    email = models.EmailField('Email', max_length=100)
+
+In above model, we did not define any primary key, so django will create id as a primary key by default.
+
+user1 = get_object_or_404(UserModel, id=id)
+user2 = get_object_or_404(UserModel, pk=id)
+
+**Output of user1 and user2 will same, because pk will also refer to id field in this case.
+
+CASE-2:
+-------
+class UserModel(models.Model):
+    name = models.CharField('Name', max_length=20)
+    email = models.EmailField('Email', max_length=100, primary_key=True)
+
+In above model, we define email as primary key, so django will not create id as a primary key by default and email will be our primary key for UserModel.
+
+user1 = get_object_or_404(UserModel, id=id)
+user2 = get_object_or_404(UserModel, pk=id)
+
+**Output of user1 and user2 will not same, because id will refer to id field but now, pk will refer to email field in this case.

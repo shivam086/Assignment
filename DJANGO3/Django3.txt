@@ -1,0 +1,30 @@
+from rest_framework.response import Response
+
+class UserViewSet(viewsets.ViewSet):
+    action_serializers = {
+        'retrieve': UserDetailSerializer
+    }
+
+    def retrieve(self, request, user_id):
+        """
+        retrieve method used for user details.
+            :param request:
+            :param user_id:
+            :return: response
+        """
+        user = User.objects.filter(id=user_id).first()
+        serializer = self.action_serializers.get(self.action)(user)
+        return Response(serializer.data, status=status_code.HTTP_200_OK)
+
+In this above example, we are creating a class based view to retrieve the user details.
+
+So in line 17, we are returning the Response. If, we will replace this line to only
+
+Response(serializer.data, status=status_code.HTTP_200_OK)
+
+exclude return keyword.
+
+OR
+
+will remove the line 17 from UserViewSet, then we will get following error:
+"Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be returned from the view, but received a `<class 'NoneType'>`"
